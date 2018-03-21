@@ -1,10 +1,12 @@
 import struct
 import socket
 
+from other_methods import *
 from network.ethernet import Ethernet
 from network.ipv4 import IPv4
 from network.icmp import ICMP
 from network.tcp import TCP
+from network.udp import UDP
 
 
 TAB1 = '\t - '
@@ -21,7 +23,7 @@ def Main():
     #while True:
         raw_data, addr = conn.recvfrom(65530)
         eth = Ethernet(raw_data)
-        print("-----------------------------------------------------------------------------------------------------")
+        print("---------------------------------------------------------------------------------------------------------------------------------------------------------")
         print("NEW PACKET:")
         print("- ETHERNET:")
         print(TAB1 + "Destination mac: {}, Source mac: {}, Protocol: {}".format(eth.dest_mac, eth.src_mac, eth.proto))
@@ -40,7 +42,7 @@ def Main():
                 print("\n" + TAB2 + 'ICMP:')
                 print(TAB3 + "Icmp_type: {}, Code: {}, Checksum: {}".format(icmp.icmp_type, icmp.code, icmp.checksum))
                 print(TAB3 + "ICMP DATA: {}".format(icmp.data)) 
-                print("-----------------------------------------------------------------------------------------------------")
+                print("---------------------------------------------------------------------------------------------------------------------------------------------------------")
       
             ## TCP Packets if protocol = 6
             elif ipv4.proto == 6:
@@ -49,17 +51,24 @@ def Main():
                 print(TAB3 + "Source Port: {}, Destination Port: {}".format(tcp.src_port, tcp.dst_port))
                 print(TAB3 + "Acknowledge: {}, Sequence_number: {}".format(tcp.ack, tcp.seq))
                 print(TAB3 + "Flags:\n" + TAB3 + "Urgent: {}, Ack: {}, Push: {}, Rst: {}, Syn: {}, Fin: {}".format(tcp.urg, tcp.ack, tcp.push, tcp.rst, tcp.syn, tcp.fin))
-                print(TAB3 + "TCP_DATA: {}".format(tcp.data))
-                print("-----------------------------------------------------------------------------------------------------")
+                #print(TAB3 + "TCP_DATA: {}".format(tcp.data))
+                print(TAB3 + "TCP_DATA: ")
+                print(format_multi_line(TAB4, tcp.data))
+                print("---------------------------------------------------------------------------------------------------------------------------------------------------------")
  
             ## UDP Packets if protocol = 17
+            elif ipv4.proto == 17:
+                udp = UDP(raw_data)
+                print("\n" + TAB2 + "UDP:")
+                print(TAB3 + "Source Port: {}, Destination Port: {}".format(udp.src_port, udp.dst_port))
+                print(TAB3 + "UDP Length: {}".format(udp.length))
+                print("---------------------------------------------------------------------------------------------------------------------------------------------------------")
 
 
-
-Main()
+if __name__ == "__main__":
+    Main()
 
         
-
 
 
 
